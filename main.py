@@ -1,16 +1,17 @@
 from test_data import score_matrix, contribution_matrix, author_limits
 import utils
-
+from simulated_annealing_penalty import SimulatedAnnealingPenalty
 
 def main():
     print("Hello World!")
-    (entry_matrix, working_point) = utils.build_initial_matrices(score_matrix, contribution_matrix)
+    simulated_annealing = SimulatedAnnealingPenalty(score_matrix, contribution_matrix, author_limits, 100, 90, 150, 200)
     print("Entry matrix (score, contribution, unit gain): ")
-    utils.print_matrix(entry_matrix)
+    utils.print_matrix(simulated_annealing.entry_matrix)
     print("Random working point: ")
+    utils.print_matrix(simulated_annealing.working_point)
+    working_point, score = simulated_annealing.simulated_annealing()
+    print("Working_point:")
     utils.print_matrix(working_point)
-    for i in range(3):
-        utils.iterate(entry_matrix, working_point)
-
+    print(f"Score: {score}")
 
 main()
