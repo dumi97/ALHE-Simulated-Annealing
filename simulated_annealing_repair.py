@@ -1,5 +1,6 @@
 from simulated_annealing import SimulatedAnnealing
 
+
 class SimulatedAnnealingRepair(SimulatedAnnealing):
     def __init__(self, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
         super().__init__(score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature)
@@ -21,7 +22,7 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
 
     def modify_working_point(self, i, j):
         """
-        Inverts bit (acceptance of article) of solution (working point) on specific coodinates.
+        Inverts bit (acceptance of article) of solution (working point) on specific coordinates.
         If solution is prohibited repairs it.
         """
 

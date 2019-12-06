@@ -1,8 +1,10 @@
 import random
 import math
+import abc  # abc - Abstract Base Class
 from entry import Entry
 
-class SimulatedAnnealing:
+
+class SimulatedAnnealing(abc.ABC):
 
     def __init__(self, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
         self.entry_matrix, self.working_point = self.build_initial_matrices(score_matrix, contribution_matrix)
@@ -10,8 +12,22 @@ class SimulatedAnnealing:
         self.current_score = self.calculate_score()
         self.iteration_count = iteration_count
         self.start_temperature = start_temperature
-        
-    def build_initial_matrices(self, score_matrix, contribution_matrix):
+        self.temperature = self.start_temperature
+
+    @abc.abstractmethod
+    def calculate_score(self):
+        pass
+
+    @abc.abstractmethod
+    def calculate_neighbour_score(self, i, j):
+        pass
+
+    @abc.abstractmethod
+    def modify_working_point(self, i, j):
+        pass
+
+    @staticmethod
+    def build_initial_matrices(score_matrix, contribution_matrix):
         """
         Build the matrix of entries containing score, contribution and profit gain of each article, then sort it.
         Also generates first random working point matrix. Returns both generated matrices.
@@ -40,8 +56,6 @@ class SimulatedAnnealing:
         Makes iterations of simulated annealing algorithm.
         Returns working point and score of this point.
         """
-
-        self.temperature = self.start_temperature
 
         for i in range(self.iteration_count):
             print(f"Iteration: {i}")
@@ -84,7 +98,7 @@ class SimulatedAnnealing:
         if self.temperature == 0:
             return 0
         else:
-            return math.exp(abs(self.current_score - neighbour_score) / self.temperature)
+            return math.exp(-abs(self.current_score - neighbour_score) / self.temperature)
 
     def update_temperature(self, iteration):
         """
