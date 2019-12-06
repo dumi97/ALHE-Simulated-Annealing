@@ -1,19 +1,45 @@
 from simulated_annealing import SimulatedAnnealing
+from utils import print_matrix
 
 
 class SimulatedAnnealingPenalty(SimulatedAnnealing):
     def __init__(self, score_matrix, contribution_matrix, author_limit_list, iteration_count,
                  start_temperature, author_penalty, university_penalty):
-        super().__init__(score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature)
         self.author_penalty = author_penalty
         self.university_penalty = university_penalty
+        super().__init__(score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature)
 
     def calculate_score(self):
         """
         Calculates score for working point stored in object.
         """
+        author_buffer = []
+        university_buffer = 0
+        total_score = 0
+        total_author_penalty = 0
+        total_university_penalty = 0
+        for i in range(len(self.working_point)):
+            author_buffer.append(0)
+            for j in range(len(self.working_point[i])):
+                if self.working_point[i][j]:
+                    total_score += self.entry_matrix[i][j].score
+                    author_buffer[i] += self.entry_matrix[i][j].contribution
+                    university_buffer += self.entry_matrix[i][j].contribution
 
-        return 0
+                    if author_buffer[i] > self.author_limit_list[i]:
+                        total_author_penalty += self.author_penalty
+                    if university_buffer > self.university_limit:
+                        total_university_penalty += self.university_penalty
+
+        total_score = total_score - total_author_penalty - total_university_penalty
+        # Debug prints
+        #
+        # print("[SimulatedAnnealingPenalty Score] For working point: ")
+        # print_matrix(self.working_point)
+        # print(f"calculated score: {total_score}, total_author_penalty: {total_author_penalty}, total_university_penalty: {total_university_penalty}")
+        # print(f"author_buffers: {author_buffer}, university_buffer: {university_buffer}")
+
+        return total_score
 
     def calculate_neighbour_score(self, i, j):
         """

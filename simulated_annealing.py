@@ -9,6 +9,7 @@ class SimulatedAnnealing(abc.ABC):
     def __init__(self, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
         self.entry_matrix, self.working_point = self.build_initial_matrices(score_matrix, contribution_matrix)
         self.author_limit_list = author_limit_list
+        self.university_limit = 300*len(author_limit_list)  # WARNING - can one author be on the list multiple times?
         self.current_score = self.calculate_score()
         self.iteration_count = iteration_count
         self.start_temperature = start_temperature
