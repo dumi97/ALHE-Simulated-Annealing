@@ -38,16 +38,23 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         Calculates neighbour score with simulated repair without modifications.
         It does not change working point.
         """
-        
-        original_working_point = self.working_point
 
-        # Debug prints
+        # Debug prints and variables
         #
+        # old_value = self.working_point[i][j]
         # print("[SimulatedAnnealingRepair Neighbour Score] For original point: ")
         # print_matrix(self.working_point)
 
-        self.modify_working_point(i, j)
+        self.working_point[i][j] = not self.working_point[i][j]
         neighbour_score = self.calculate_score()
+
+        # Debug prints
+        #
+        # print(f"unfixed score: {neighbour_score}")
+        # print(f"unfixed author_buffers: {self.author_buffer}")
+        # print(f"unfixed university_buffer: {self.university_buffer}")
+
+        neighbour_score = self.check_and_fix(i, j, False, neighbour_score)
 
         # Debug prints and asserts
         #
@@ -56,11 +63,18 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         # print(f"score: {neighbour_score}")
         # print(f"fixed author_buffers: {self.author_buffer}")
         # print(f"fixed university_buffer: {self.university_buffer}")
-        # for i in range(len(self.author_limit_list)):
-        #     assert self.author_buffer[i] <= self.author_limit_list[i],f"Repair author {i} limit check failed - is {self.author_buffer[i]}, limit {self.author_limit_list[i]}"
-        # assert self.university_buffer <= self.university_limit,f"Repair university limit check failed - is {self.university_buffer}, limit {self.university_limit}"
+        # for k in range(len(self.author_limit_list)):
+        #     assert self.author_buffer[k] <= self.author_limit_list[i], f"Repair author {k} limit check failed - is {self.author_buffer[k]}, limit {self.author_limit_list[k]}"
+        # assert self.university_buffer <= self.university_limit, f"Repair university limit check failed - is {self.university_buffer}, limit {self.university_limit}"
 
-        self.working_point = original_working_point
+        self.working_point[i][j] = not self.working_point[i][j]
+
+        # Debug prints
+        #
+        # print("Restored working point: ")
+        # print_matrix(self.working_point)
+        # assert self.working_point[i][j] == old_value, f"Matrix check failed - working point not restored (was {old_value}, is {self.working_point[i][j]})"
+
         return neighbour_score
 
     def modify_working_point(self, i, j):
@@ -72,39 +86,52 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         self.working_point[i][j] = not self.working_point[i][j]
         # calculate score to fill buffers
         self.calculate_score()
+        self.check_and_fix(i, j, True, 0)
 
         # Debug prints
         #
-        # print(f"author_buffers: {self.author_buffer}")
-        # print(f"university_buffer: {self.university_buffer}")
+        # for k in range(len(self.author_limit_list)):
+        #     assert self.author_buffer[k] <= self.author_limit_list[i],f"Repair author {k} limit check failed - is {self.author_buffer[k]}, limit {self.author_limit_list[k]}"
+        # assert self.university_buffer <= self.university_limit,f"Repair university limit check failed - is {self.university_buffer}, limit {self.university_limit}"
+        # print(f"Point modified at ({i}, {j}) and returned as: ")
+        # print_matrix(self.working_point)
+        # print(f"modified author_buffers: {self.author_buffer}")
+        # print(f"modified university_buffer: {self.university_buffer}")
 
-        self.check_and_fix(i, j)
-
-    def check_and_fix(self, changed_i, changed_j):
+    def check_and_fix(self, changed_i, changed_j, modify_list, current_score):
         """
-        Repairs the current working point. This method does change the working point.
+        Repairs the current working point. It can also simulate repair and calculate score without changing the point.
         It will AVOID fixing the neighbour's changed (i, j) point even if it has the lowest unit gain
         """
 
-        # print("---------- Check-and-fix Starting\n---------- Fixing authors...")  # Debug
+        # Debug prints
+        #
+        # print("---------- Check-and-fix Starting") if modify_list else print("---------- Check-and-fix Simulation Starting")
+        # print("---------- Fixing authors...")
 
         # check and fix author limits
+        changed_positions = set()
         for i in range(len(self.working_point)):
             if self.author_buffer[i] <= self.author_limit_list[i]:
                 continue
             for j in range(len(self.working_point[i])):
                 if self.working_point[i][j] and (i != changed_i or j != changed_j):
 
-                    # print(f"---------- Fixing point ({i}, {j})")  # Debug
+                    print(f"---------- Fixing point ({i}, {j})")  # Debug
 
-                    self.working_point[i][j] = False
+                    if modify_list:
+                        self.working_point[i][j] = False
+                    else:
+                        changed_positions.add((i, j))
+                    current_score -= self.entry_matrix[i][j].score
                     self.author_buffer[i] -= self.entry_matrix[i][j].contribution
+                    self.university_buffer -= self.entry_matrix[i][j].contribution
                     if self.author_buffer[i] <= self.author_limit_list[i]:
                         break
 
         # check and fix university limit
         if self.university_buffer <= self.university_limit:
-            return
+            return current_score
 
         # print("---------- Fixing university...")  # Debug
 
@@ -115,12 +142,27 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
 
             # find current lowest unit gain to remove
             for i in range(len(current_lookups)):
-                # search for the first True value until the end of list
-                while not self.working_point[i][current_lookups[i]] or current_lookups[i] == -1:
-                    self.increment_lookup_index(current_lookups, i)
-                    # avoid fixing changed (i, j) point
-                    if changed_i == i and changed_j == current_lookups[i]:
+                # search for the first valid True value until the end of list
+                valid = False
+                while not valid:
+                    valid = True
+                    # reached end of list
+                    if current_lookups[i] == -1:
+                        break
+                    # entry is false
+                    if not self.working_point[i][current_lookups[i]]:
+                        valid = False
                         self.increment_lookup_index(current_lookups, i)
+                    # avoid fixing changed (i, j) point
+                    elif changed_i == i and changed_j == current_lookups[i]:
+                        valid = False
+                        self.increment_lookup_index(current_lookups, i)
+                    # if this is a simulation check if entry has already been changed, if so - skip it
+                    elif not modify_list and (i, current_lookups[i]) in changed_positions:
+                        # print(f"---------- Point ({i}, {current_lookups[i]}) marked as changed in current simulation")  # Debug
+                        valid = False
+                        self.increment_lookup_index(current_lookups, i)
+
 
                 # check if lookup index i reached end of list
                 if current_lookups[i] == -1:
@@ -131,10 +173,15 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
 
             # remove current lowest unit gain
             # print(f"---------- Fixing point ({index_to_remove}, {current_lookups[index_to_remove]})")  # Debug
-            # assert self.working_point[index_to_remove][current_lookups[index_to_remove]] is True,f"Repair university fixing check failed - ({index_to_remove}, {current_lookups[index_to_remove]}) is already False"  # Debug
-            self.working_point[index_to_remove][current_lookups[index_to_remove]] = False
+            # assert self.working_point[index_to_remove][current_lookups[index_to_remove]] is True, f"Repair university fixing check failed - ({index_to_remove}, {current_lookups[index_to_remove]}) is already False"  # Debug
+            if modify_list:
+                self.working_point[index_to_remove][current_lookups[index_to_remove]] = False
+            current_score -= self.entry_matrix[index_to_remove][current_lookups[index_to_remove]].score
+            self.author_buffer[index_to_remove] -= self.entry_matrix[index_to_remove][current_lookups[index_to_remove]].contribution
             self.university_buffer -= self.entry_matrix[index_to_remove][current_lookups[index_to_remove]].contribution
             self.increment_lookup_index(current_lookups, index_to_remove)
+
+        return current_score
 
     def increment_lookup_index(self, current_lookups, i):
         """
