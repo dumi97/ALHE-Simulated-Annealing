@@ -117,7 +117,7 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
             for j in range(len(self.working_point[i])):
                 if self.working_point[i][j] and (i != changed_i or j != changed_j):
 
-                    print(f"---------- Fixing point ({i}, {j})")  # Debug
+                    # print(f"---------- Fixing point ({i}, {j})")  # Debug
 
                     if modify_list:
                         self.working_point[i][j] = False

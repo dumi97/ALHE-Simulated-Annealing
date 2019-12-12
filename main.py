@@ -13,9 +13,12 @@ def main():
     print("Random working point: ")
     utils.print_matrix(simulated_annealing.working_point)
     working_point, score = simulated_annealing.simulated_annealing()
-    print("Working_point:")
+    print("Last working_point:")
     utils.print_matrix(working_point)
-    print(f"Score: {score}")
+    print(f"Last Score: {score}")
+    print("Best working_point:")
+    utils.print_matrix(simulated_annealing.get_best_point())
+    print(f"Best score: {simulated_annealing.get_best_score()}")
 
 
 main()

@@ -1,6 +1,7 @@
 import random
 import math
 import abc  # abc - Abstract Base Class
+import copy
 from entry import Entry
 
 
@@ -14,6 +15,8 @@ class SimulatedAnnealing(abc.ABC):
         self.iteration_count = iteration_count
         self.start_temperature = start_temperature
         self.temperature = self.start_temperature
+        self.best_point = copy.deepcopy(self.working_point)
+        self.best_score = self.current_score
 
     @abc.abstractmethod
     def calculate_score(self):
@@ -52,6 +55,15 @@ class SimulatedAnnealing(abc.ABC):
 
         return entry_matrix, working_point
 
+    def save_best_point(self):
+        self.best_point = copy.deepcopy(self.working_point)
+
+    def get_best_point(self):
+        return self.best_point
+
+    def get_best_score(self):
+        return self.best_score
+
     def simulated_annealing(self):
         """
         Makes iterations of simulated annealing algorithm.
@@ -59,8 +71,12 @@ class SimulatedAnnealing(abc.ABC):
         """
 
         for i in range(self.iteration_count):
-            print(f"Iteration: {i}")
-            print(f"Temperature: {self.temperature}")
+
+            # Debug prints
+            #
+            # print(f"Iteration: {i}")
+            # print(f"Temperature: {self.temperature}")
+
             self.update_temperature(i)
             self.iterate()
 
@@ -78,6 +94,9 @@ class SimulatedAnnealing(abc.ABC):
         if neighbour_score > self.current_score or random.random() <= self.calculate_acceptance_probability(neighbour_score):
             self.modify_working_point(i, j)
             self.current_score = neighbour_score
+            if neighbour_score > self.best_score:
+                self.best_score = neighbour_score
+                self.save_best_point()
 
     def generate_random_neighbour_change(self):
         """
