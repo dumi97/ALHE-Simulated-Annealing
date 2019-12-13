@@ -2,10 +2,13 @@ from test_data import score_matrix, contribution_matrix, author_limits
 import utils
 from simulated_annealing_penalty import SimulatedAnnealingPenalty
 from simulated_annealing_repair import SimulatedAnnealingRepair
-
+from input import generate_accepted_input
+import filozofia_input
+import informatyka_techniczna_telekomunikacja_input
 
 def main():
     print("Hello World!")
+    lp_matrix, score_matrix, contribution_matrix, author_limits = generate_accepted_input(filozofia_input)
     # simulated_annealing = SimulatedAnnealingPenalty(score_matrix, contribution_matrix, author_limits, 100, 90, 150, 200)
     simulated_annealing = SimulatedAnnealingRepair(score_matrix, contribution_matrix, author_limits, 100, 90)
     print("Entry matrix (score, contribution, unit gain): ")
