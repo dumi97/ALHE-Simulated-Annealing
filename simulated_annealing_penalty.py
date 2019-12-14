@@ -1,5 +1,4 @@
 from simulated_annealing import SimulatedAnnealing
-from utils import print_matrix
 
 
 class SimulatedAnnealingPenalty(SimulatedAnnealing):
@@ -32,13 +31,6 @@ class SimulatedAnnealingPenalty(SimulatedAnnealing):
                         total_university_penalty += self.university_penalty
 
         total_score = total_score - total_author_penalty - total_university_penalty
-        # Debug prints
-        #
-        # print("[SimulatedAnnealingPenalty Score] For working point: ")
-        # print_matrix(self.working_point)
-        # print(f"calculated score: {total_score}, total_author_penalty: {total_author_penalty}, total_university_penalty: {total_university_penalty}")
-        # print(f"author_buffers: {author_buffer}, university_buffer: {university_buffer}")
-
         return total_score
 
     def calculate_neighbour_score(self, i, j):

@@ -6,8 +6,8 @@ from entry import Entry
 
 university_full_limit = 3.0
 
-class SimulatedAnnealing(abc.ABC):
 
+class SimulatedAnnealing(abc.ABC):
     def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
         self.entry_matrix, self.working_point = self.build_initial_matrices(lp_matrix, score_matrix, contribution_matrix)
         self.author_limit_list = author_limit_list
@@ -73,12 +73,6 @@ class SimulatedAnnealing(abc.ABC):
         """
 
         for i in range(self.iteration_count):
-
-            # Debug prints
-            #
-            # print(f"Iteration: {i}")
-            # print(f"Temperature: {self.temperature}")
-
             self.update_temperature(i)
             self.iterate()
 

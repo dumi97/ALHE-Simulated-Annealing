@@ -1,23 +1,26 @@
 full_author_limit = 4.0
 
+
 def generate_accepted_input(input_data):
     """
-    Gets global matrixes and changes them to accepted form by simulated annealing algorithm.
+    Gets global matrices and changes them to accepted form by simulated annealing algorithm.
     """
 
     return convert_input(input_data.w, input_data.u, input_data.pracownik, input_data.doktorant, input_data.udzial)
 
+
 def convert_input(score_matrix, contribution_matrix, worker, doctoral, area_author_percentage_list):
     """
-    Converts and calculates matrixes that are accepted by simulated annealing algorithm.
-    Input matrixes contains authors that has zero contribution for specific articles - it is unnecessary data for simulated annealing algorithm.
-    Unnecessary data is removed from matrixes.
+    Converts and calculates matrices that are accepted by simulated annealing algorithm.
+    Input matrices contains authors that has zero contribution for specific articles - it is unnecessary data for simulated annealing algorithm.
+    Unnecessary data is removed from matrices.
     Author article limit has to be calculated based on area percentage and worker's university.
-    It returns: matrix with orginal positions in matrix before removal (lp), dense score matrix, dense contribution matrix and calculated author_limit_list for specific domain.
+    It returns: matrix with original positions in matrix before removal (lp), dense score matrix, dense contribution matrix and calculated author_limit_list for specific domain.
     """
 
     author_limit_list = get_author_limit_list(worker, doctoral, area_author_percentage_list)
-    return convert_matrixes_to_dense(score_matrix, contribution_matrix, author_limit_list)
+    return convert_matrices_to_dense(score_matrix, contribution_matrix, author_limit_list)
+
 
 def get_author_limit_list(worker, doctoral, area_author_percentage_list):
     """
@@ -35,12 +38,13 @@ def get_author_limit_list(worker, doctoral, area_author_percentage_list):
 
     return author_limit_list
 
-def convert_matrixes_to_dense(score_matrix, contribution_matrix, author_limit_list):
+
+def convert_matrices_to_dense(score_matrix, contribution_matrix, author_limit_list):
     """
-    Converts input matrixes to dense one.
-    Input matrixes contains authors that has zero contribution for specific articles - it is unnecessary data for simulated annealing algorithm.
-    Unnecessary data is removed from matrixes.
-    It returns: matrix with orginal positions in matrix before removal (lp), dense score matrix, dense contribution matrix, calculated author_limit_list for specific domain, rows count of original matrix and columns count of original matrix.
+    Converts input matrices to dense one.
+    Input matrices contains authors that has zero contribution for specific articles - it is unnecessary data for simulated annealing algorithm.
+    Unnecessary data is removed from matrices.
+    It returns: matrix with original positions in matrix before removal (lp), dense score matrix, dense contribution matrix, calculated author_limit_list for specific domain, rows count of original matrix and columns count of original matrix.
     """
 
     lp_matrix = []
@@ -63,6 +67,7 @@ def convert_matrixes_to_dense(score_matrix, contribution_matrix, author_limit_li
             dense_author_limit_list.append(author_limit)
         
     return lp_matrix, dense_score_matrix, dense_contribution_matrix, dense_author_limit_list, n_rows, n_columns
+
 
 def convert_author_lists_to_dense(row, author_score, author_contribution):
     """
