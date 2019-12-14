@@ -40,43 +40,46 @@ def convert_matrixes_to_dense(score_matrix, contribution_matrix, author_limit_li
     Converts input matrixes to dense one.
     Input matrixes contains authors that has zero contribution for specific articles - it is unnecessary data for simulated annealing algorithm.
     Unnecessary data is removed from matrixes.
-    It returns: matrix with orginal positions in matrix before removal (lp), dense score matrix, dense contribution matrix and calculated author_limit_list for specific domain.
+    It returns: matrix with orginal positions in matrix before removal (lp), dense score matrix, dense contribution matrix, calculated author_limit_list for specific domain, rows count of original matrix and columns count of original matrix.
     """
 
     lp_matrix = []
     dense_score_matrix = []
     dense_contribution_matrix = []
     dense_author_limit_list = []
-    for i in range(len(contribution_matrix)):
+    n_rows = len(contribution_matrix)
+    n_columns = 0
+    for i in range(n_rows):
         author_score = score_matrix[i]
         author_contribution = contribution_matrix[i]
         author_limit = author_limit_list[i]
 
         if author_limit != 0.0:
-            dense_author_lp, dense_author_score, dense_author_contribution = convert_author_lists_to_dense(i, author_score, author_contribution)
+            dense_author_lp, dense_author_score, dense_author_contribution, n_columns = convert_author_lists_to_dense(i, author_score, author_contribution)
             
             lp_matrix.append(dense_author_lp)
             dense_score_matrix.append(dense_author_score)
             dense_contribution_matrix.append(dense_author_contribution)
             dense_author_limit_list.append(author_limit)
         
-    return lp_matrix, dense_score_matrix, dense_contribution_matrix, dense_author_limit_list
+    return lp_matrix, dense_score_matrix, dense_contribution_matrix, dense_author_limit_list, n_rows, n_columns
 
 def convert_author_lists_to_dense(row, author_score, author_contribution):
     """
     Converts author's percentage contribution list to dense one.
     It removes articles that has no contribution by author (contribution is equal zero).
-    Returns: coordinate matrix of position in original data, dense author score list and dense author contribution list.
+    Returns: coordinate matrix of position in original data, dense author score list, dense author contribution list and orginal count of columns.
     """
 
     dense_author_lp = []
     dense_author_score = []
     dense_author_contribution = []
-    for j in range(len(author_contribution)):
+    n_columns = len(author_contribution)
+    for j in range(n_columns):
         contribution = author_contribution[j]
         if contribution != 0:
             dense_author_lp.append((row, j))
             dense_author_score.append(author_score[j])
             dense_author_contribution.append(contribution)
 
-    return dense_author_lp, dense_author_score, dense_author_contribution
+    return dense_author_lp, dense_author_score, dense_author_contribution, n_columns
