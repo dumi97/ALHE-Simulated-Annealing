@@ -11,7 +11,7 @@ def main():
     print("Hello World!")
     lp_matrix, score_matrix, contribution_matrix, author_limits, n_rows, n_columns = generate_accepted_input(filozofia_input)
     # simulated_annealing = SimulatedAnnealingPenalty(score_matrix, contribution_matrix, author_limits, 100, 90, 150, 200)
-    simulated_annealing = SimulatedAnnealingRepair(score_matrix, contribution_matrix, author_limits, 100, 90)
+    simulated_annealing = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, 100, 90)
     print("Entry matrix (score, contribution, unit gain): ")
     utils.print_matrix(simulated_annealing.entry_matrix)
     print("Random working point: ")
@@ -24,6 +24,6 @@ def main():
     utils.print_matrix(simulated_annealing.get_best_point())
     print(f"Best score: {simulated_annealing.get_best_score()}")
     print("Best working_point in orginal form:")
-    utils.print_matrix(generate_accepted_output(lp_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
 
 main()

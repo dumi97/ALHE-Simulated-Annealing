@@ -3,10 +3,10 @@ from utils import print_matrix
 
 
 class SimulatedAnnealingRepair(SimulatedAnnealing):
-    def __init__(self, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
+    def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
         self.author_buffer = []
         self.university_buffer = 0
-        super().__init__(score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature)
+        super().__init__(lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature)
 
     def calculate_score(self):
         """

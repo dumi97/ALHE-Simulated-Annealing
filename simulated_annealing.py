@@ -8,8 +8,8 @@ university_full_limit = 3.0
 
 class SimulatedAnnealing(abc.ABC):
 
-    def __init__(self, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
-        self.entry_matrix, self.working_point = self.build_initial_matrices(score_matrix, contribution_matrix)
+    def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
+        self.entry_matrix, self.working_point = self.build_initial_matrices(lp_matrix, score_matrix, contribution_matrix)
         self.author_limit_list = author_limit_list
         self.university_limit = university_full_limit*len(author_limit_list)
         self.current_score = self.calculate_score()
@@ -32,7 +32,7 @@ class SimulatedAnnealing(abc.ABC):
         pass
 
     @staticmethod
-    def build_initial_matrices(score_matrix, contribution_matrix):
+    def build_initial_matrices(lp_matrix, score_matrix, contribution_matrix):
         """
         Build the matrix of entries containing score, contribution and profit gain of each article, then sort it.
         Also generates first random working point matrix. Returns both generated matrices.
@@ -41,13 +41,14 @@ class SimulatedAnnealing(abc.ABC):
         entry_matrix = []
         working_point = []
         for i in range(len(score_matrix)):
+            lp_author = lp_matrix[i]
             score_author = score_matrix[i]
             contribution_author = contribution_matrix[i]
 
             entry_author = []
             working_point_author = []
             for j in range(len(score_author)):
-                entry_author.append(Entry(score_author[j], contribution_author[j]))
+                entry_author.append(Entry(lp_author[j], score_author[j], contribution_author[j]))
                 working_point_author.append(bool(random.getrandbits(1)))
 
             entry_author.sort()
