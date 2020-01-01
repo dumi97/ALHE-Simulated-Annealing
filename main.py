@@ -31,13 +31,7 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
         simulated_annealing = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode, 150, 200)
     else:
         simulated_annealing = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode)
-    print("---Entry matrix (score, contribution, unit gain): ")
-    utils.print_matrix(simulated_annealing.entry_matrix)
-    print("---Init working point: ")
-    utils.print_matrix(simulated_annealing.working_point)
-    print("\n---Init working point in original form:")
-    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.working_point, n_rows, n_columns))
-
+    
     pair_count = get_author_article_pairs_count(simulated_annealing.working_point)
     print(f"---Pair author/article count: {pair_count}")
 
@@ -45,6 +39,13 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
         print("Too small number of iterations")
         print(f"Should be greater or equal: {1000*pair_count}")
         return
+    
+    print("---Entry matrix (score, contribution, unit gain): ")
+    utils.print_matrix(simulated_annealing.entry_matrix)
+    print("---Init working point: ")
+    utils.print_matrix(simulated_annealing.working_point)
+    print("\n---Init working point in original form:")
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.working_point, n_rows, n_columns))
 
     stop_list = [1, 10*pair_count, 100*pair_count, 1000*pair_count]
 

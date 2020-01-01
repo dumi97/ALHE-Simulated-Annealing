@@ -80,9 +80,14 @@ class SimulatedAnnealing(abc.ABC):
 
         if iteration_count == 0:
             iteration_count = self.iteration_count
+        else:
+            iteration_count += self.current_iteration
+
+            if iteration_count > self.iteration_count:
+                iteration_count = self.iteration_count
         
         for i in range(self.current_iteration, iteration_count):
-            self.current_iteration = i
+            self.current_iteration += 1
             self.update_temperature(i)
             self.iterate()
 
