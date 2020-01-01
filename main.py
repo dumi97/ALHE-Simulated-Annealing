@@ -54,6 +54,8 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
         iterations = stop - prev_iteration
 
         working_point, score = simulated_annealing.simulated_annealing(iterations)
+        prev_iteration = stop
+
         print(f"\n---{stop} working_point:")
         utils.print_matrix(simulated_annealing.get_best_point())
         print(f"---{stop} score: {simulated_annealing.get_best_score()}")
