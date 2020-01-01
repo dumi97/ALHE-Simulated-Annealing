@@ -8,7 +8,7 @@ import matematyka_input
 import informatyka_techniczna_telekomunikacja_input
 
 
-def main(use_penalty, input_field, number_of_iterations=100, starting_temperature=90):
+def main(use_penalty, input_field, number_of_iterations=10000, starting_temperature=90):
 
     if input_field == 'f':
         used_input = filozofia_input
@@ -29,7 +29,30 @@ def main(use_penalty, input_field, number_of_iterations=100, starting_temperatur
     utils.print_matrix(simulated_annealing.entry_matrix)
     print("---Random working point: ")
     utils.print_matrix(simulated_annealing.working_point)
+
     print("\n---Running Simulated Annealing...")
+
+    working_point, score = simulated_annealing.simulated_annealing(10)
+    print("\n---10 working_point:")
+    utils.print_matrix(simulated_annealing.get_best_point())
+    print(f"---10 score: {simulated_annealing.get_best_score()}")
+    print("\n---10 working_point in original form:")
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+
+    working_point, score = simulated_annealing.simulated_annealing(100-10)
+    print("\n---100 working_point:")
+    utils.print_matrix(simulated_annealing.get_best_point())
+    print(f"---100 score: {simulated_annealing.get_best_score()}")
+    print("\n---100 working_point in original form:")
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+
+    working_point, score = simulated_annealing.simulated_annealing(1000-100)
+    print("\n---1000 working_point:")
+    utils.print_matrix(simulated_annealing.get_best_point())
+    print(f"---1000 score: {simulated_annealing.get_best_score()}")
+    print("\n---1000 working_point in original form:")
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+
     working_point, score = simulated_annealing.simulated_annealing()
     print("\n---Last working_point:")
     utils.print_matrix(working_point)

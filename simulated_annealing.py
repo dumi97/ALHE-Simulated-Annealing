@@ -13,6 +13,7 @@ class SimulatedAnnealing(abc.ABC):
         self.author_limit_list = author_limit_list
         self.university_limit = university_full_limit*len(author_limit_list)
         self.current_score = self.calculate_score()
+        self.current_iteration = 0
         self.iteration_count = iteration_count
         self.start_temperature = start_temperature
         self.temperature = self.start_temperature
@@ -66,13 +67,18 @@ class SimulatedAnnealing(abc.ABC):
     def get_best_score(self):
         return self.best_score
 
-    def simulated_annealing(self):
+    def simulated_annealing(self, iteration_count=0):
         """
         Makes iterations of simulated annealing algorithm.
         Returns working point and score of this point.
+        While running specified iterations are made.
         """
 
-        for i in range(self.iteration_count):
+        if iteration_count == 0:
+            iteration_count = self.iteration_count
+        
+        for i in range(self.current_iteration, iteration_count):
+            self.current_iteration = i
             self.update_temperature(i)
             self.iterate()
 
