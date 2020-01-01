@@ -14,7 +14,7 @@ def get_author_article_pairs_count(working_point):
 
     return count
 
-def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90):
+def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90, init_generation_mode=0):
 
     if input_field == 'f':
         used_input = filozofia_input
@@ -28,14 +28,14 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
 
     lp_matrix, score_matrix, contribution_matrix, author_limits, n_rows, n_columns = generate_accepted_input(used_input)
     if use_penalty:
-        simulated_annealing = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, 150, 200)
+        simulated_annealing = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode, 150, 200)
     else:
-        simulated_annealing = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature)
+        simulated_annealing = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode)
     print("---Entry matrix (score, contribution, unit gain): ")
     utils.print_matrix(simulated_annealing.entry_matrix)
-    print("---Random working point: ")
+    print("---Init working point: ")
     utils.print_matrix(simulated_annealing.working_point)
-    print("\n---Random working point in original form:")
+    print("\n---Init working point in original form:")
     utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.working_point, n_rows, n_columns))
 
     pair_count = get_author_article_pairs_count(simulated_annealing.working_point)

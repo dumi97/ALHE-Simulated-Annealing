@@ -8,8 +8,12 @@ university_full_limit = 3.0
 
 
 class SimulatedAnnealing(abc.ABC):
-    def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature):
-        self.entry_matrix, self.working_point = self.build_initial_matrices(lp_matrix, score_matrix, contribution_matrix)
+    def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature, init_generation_mode):
+        if init_generation_mode < 2:
+            self.entry_matrix, self.working_point = self.build_initial_matrices_fill(lp_matrix, score_matrix, contribution_matrix, init_generation_mode)
+        else:
+            self.entry_matrix, self.working_point = self.build_initial_matrices_fill(lp_matrix, score_matrix, contribution_matrix, 0)
+
         self.author_limit_list = author_limit_list
         self.university_limit = university_full_limit*len(author_limit_list)
         self.current_score = self.calculate_score()
@@ -33,10 +37,10 @@ class SimulatedAnnealing(abc.ABC):
         pass
 
     @staticmethod
-    def build_initial_matrices(lp_matrix, score_matrix, contribution_matrix):
+    def build_initial_matrices_fill(lp_matrix, score_matrix, contribution_matrix, fill):
         """
         Build the matrix of entries containing score, contribution and profit gain of each article, then sort it.
-        Also generates first random working point matrix. Returns both generated matrices.
+        Also generates first working point matrix by filling structure with specified value. Returns both generated matrices.
         """
 
         entry_matrix = []
@@ -50,7 +54,7 @@ class SimulatedAnnealing(abc.ABC):
             working_point_author = []
             for j in range(len(score_author)):
                 entry_author.append(Entry(lp_author[j], score_author[j], contribution_author[j]))
-                working_point_author.append(bool(random.getrandbits(1)))
+                working_point_author.append(bool(fill))
 
             entry_author.sort()
             entry_matrix.append(entry_author)

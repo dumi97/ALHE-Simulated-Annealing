@@ -3,10 +3,10 @@ from simulated_annealing import SimulatedAnnealing
 
 class SimulatedAnnealingPenalty(SimulatedAnnealing):
     def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count,
-                 start_temperature, author_penalty, university_penalty):
+                 start_temperature, init_generation_mode, author_penalty, university_penalty):
         self.author_penalty = author_penalty
         self.university_penalty = university_penalty
-        super().__init__(lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature)
+        super().__init__(lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature, init_generation_mode)
 
     def calculate_score(self):
         """
