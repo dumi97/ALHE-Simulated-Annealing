@@ -7,8 +7,14 @@ import filozofia_input
 import matematyka_input
 import informatyka_techniczna_telekomunikacja_input
 
+def get_author_article_pairs_count(working_point):
+    count = 0
+    for row in working_point:
+        count += len(row)
 
-def main(use_penalty, input_field, number_of_iterations=10000, starting_temperature=90):
+    return count
+
+def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90):
 
     if input_field == 'f':
         used_input = filozofia_input
@@ -29,29 +35,30 @@ def main(use_penalty, input_field, number_of_iterations=10000, starting_temperat
     utils.print_matrix(simulated_annealing.entry_matrix)
     print("---Random working point: ")
     utils.print_matrix(simulated_annealing.working_point)
+    print("\n---Random working point in original form:")
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.working_point, n_rows, n_columns))
+
+    pair_count = get_author_article_pairs_count(simulated_annealing.working_point)
+    print(f"---Pair author/article count: {pair_count}")
+
+    if number_of_iterations < 1000*pair_count:
+        print("Too small number of iterations")
+        print(f"Should be greater or equal: {1000*pair_count}")
+        return
+
+    stop_list = [1, 10*pair_count, 100*pair_count, 1000*pair_count]
 
     print("\n---Running Simulated Annealing...")
+    prev_iteration = 0
+    for stop in stop_list:
+        iterations = stop - prev_iteration
 
-    working_point, score = simulated_annealing.simulated_annealing(10)
-    print("\n---10 working_point:")
-    utils.print_matrix(simulated_annealing.get_best_point())
-    print(f"---10 score: {simulated_annealing.get_best_score()}")
-    print("\n---10 working_point in original form:")
-    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
-
-    working_point, score = simulated_annealing.simulated_annealing(100-10)
-    print("\n---100 working_point:")
-    utils.print_matrix(simulated_annealing.get_best_point())
-    print(f"---100 score: {simulated_annealing.get_best_score()}")
-    print("\n---100 working_point in original form:")
-    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
-
-    working_point, score = simulated_annealing.simulated_annealing(1000-100)
-    print("\n---1000 working_point:")
-    utils.print_matrix(simulated_annealing.get_best_point())
-    print(f"---1000 score: {simulated_annealing.get_best_score()}")
-    print("\n---1000 working_point in original form:")
-    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+        working_point, score = simulated_annealing.simulated_annealing(iterations)
+        print(f"\n---{stop} working_point:")
+        utils.print_matrix(simulated_annealing.get_best_point())
+        print(f"---{stop} score: {simulated_annealing.get_best_score()}")
+        print(f"\n---{stop} working_point in original form:")
+        utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
 
     working_point, score = simulated_annealing.simulated_annealing()
     print("\n---Last working_point:")
@@ -64,4 +71,4 @@ def main(use_penalty, input_field, number_of_iterations=10000, starting_temperat
     utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
 
 
-main(True, 'f', 10000)
+main(True, 'f', 100000)
