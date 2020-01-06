@@ -2,6 +2,7 @@ import random
 import math
 import abc  # abc - Abstract Base Class
 import copy
+import random
 from entry import Entry
 
 university_full_limit = 3.0
@@ -9,13 +10,22 @@ university_full_limit = 3.0
 
 class SimulatedAnnealing(abc.ABC):
     def __init__(self, lp_matrix, score_matrix, contribution_matrix, author_limit_list, iteration_count, start_temperature, init_generation_mode):
-        if init_generation_mode < 2:
-            self.entry_matrix, self.working_point = self.build_initial_matrices_fill(lp_matrix, score_matrix, contribution_matrix, init_generation_mode)
-        else:
-            self.entry_matrix, self.working_point = self.build_initial_matrices_fill(lp_matrix, score_matrix, contribution_matrix, 0)
-
+        self.entry_matrix = self.build_entry_matrix(lp_matrix, score_matrix, contribution_matrix)
         self.author_limit_list = author_limit_list
         self.university_limit = university_full_limit*len(author_limit_list)
+
+        if init_generation_mode < 2:
+            self.entry_matrix = self.sort_entry_matrix(self.entry_matrix)
+            self.working_point = self.build_initial_working_point_matrix_fill(self.entry_matrix, init_generation_mode)
+        elif init_generation_mode == 2:
+            self.entry_matrix = self.sort_entry_matrix(self.entry_matrix)
+            self.working_point = self.build_initial_working_point_matrix_heuristic(self.entry_matrix,  self.author_limit_list, self.university_limit)
+        elif init_generation_mode == 3:
+            self.entry_matrix = self.permutate_entry_matrix(self.entry_matrix)
+            self.working_point = self.build_initial_working_point_matrix_heuristic(self.entry_matrix,  self.author_limit_list, self.university_limit)
+            self.working_point = self.sort_working_point_matrix(self.entry_matrix, self.working_point)
+            self.entry_matrix = self.sort_entry_matrix(self.entry_matrix)
+
         self.current_score = self.calculate_score()
         self.current_iteration = 0
         self.iteration_count = iteration_count
@@ -37,30 +47,125 @@ class SimulatedAnnealing(abc.ABC):
         pass
 
     @staticmethod
-    def build_initial_matrices_fill(lp_matrix, score_matrix, contribution_matrix, fill):
+    def build_entry_matrix(lp_matrix, score_matrix, contribution_matrix):
         """
-        Build the matrix of entries containing score, contribution and profit gain of each article, then sort it.
-        Also generates first working point matrix by filling structure with specified value. Returns both generated matrices.
+        Build the matrix of entries containing score, contribution and profit gain of each article.
+        Needs to be sorted after return.
         """
 
         entry_matrix = []
-        working_point = []
         for i in range(len(score_matrix)):
             lp_author = lp_matrix[i]
             score_author = score_matrix[i]
             contribution_author = contribution_matrix[i]
 
             entry_author = []
-            working_point_author = []
             for j in range(len(score_author)):
                 entry_author.append(Entry(lp_author[j], score_author[j], contribution_author[j]))
-                working_point_author.append(bool(fill))
 
-            entry_author.sort()
             entry_matrix.append(entry_author)
+
+        return entry_matrix
+
+    @staticmethod
+    def sort_entry_matrix(entry_matrix):
+        """
+        Sorts entry matrix.
+        """
+
+        for i in range(len(entry_matrix)):
+            entry_matrix[i].sort()
+
+        return entry_matrix
+
+    @staticmethod
+    def sort_working_point_matrix(entry_matrix, working_point):
+        """
+        Sorts working matrix according to entry matrix.
+        Entry matrix must not be sorted.
+        """
+
+        entry_matrix = copy.deepcopy(entry_matrix)
+
+        for i in range(len(entry_matrix)):
+            author_entry_matrix = entry_matrix[i]
+            for j in range(len(author_entry_matrix)):
+                author_entry_matrix[j].lp = j
+
+            author_entry_matrix.sort()
+
+        sorted_working_point = []
+        for i in range(len(entry_matrix)):
+            author_entry_matrix = entry_matrix[i]
+            author_working_point = working_point[i]
+
+            length = len(author_entry_matrix)
+            sorted_author_working_point = [False] * length
+            for j in range(length):
+                sorted_author_working_point[j] = author_working_point[author_entry_matrix[j].lp]
+
+            sorted_working_point.append(sorted_author_working_point)
+
+        return sorted_working_point
+
+    @staticmethod
+    def permutate_entry_matrix(entry_matrix):
+        """
+        Permutates entry matrix.
+        Modifies entry matrix in argument.
+        """
+
+        for i in range(len(entry_matrix)):
+            random.shuffle(entry_matrix[i])
+
+        return entry_matrix
+
+    @staticmethod
+    def build_initial_working_point_matrix_fill(entry_matrix, fill):
+        """
+        Generates first working point matrix by filling structure with specified value.
+        """
+
+        working_point = []
+        for entry_author in entry_matrix:
+            working_point_author = [bool(fill)] * len(entry_author)
             working_point.append(working_point_author)
 
-        return entry_matrix, working_point
+        return working_point
+
+    @staticmethod
+    def build_initial_working_point_matrix_heuristic(entry_matrix, author_limit_list, university_limit):
+        """
+        Generates first working point matrix by heuristic getting elements to contribution limits.
+        """
+
+        working_point = []
+        university_contribution = 0
+        for entry_author in entry_matrix:
+            author_contribution = 0
+
+            position = 0
+            working_point_author = []
+            for i in range(len(entry_author)):
+                entry = entry_author[i]
+                author_contribution += entry.contribution
+                university_contribution += entry.contribution
+
+                if author_contribution > author_limit_list[i] or university_contribution > university_limit:
+                    author_contribution -= entry.contribution
+                    university_contribution -= entry.contribution
+                    break
+                else:
+                    position += 1
+
+                working_point_author.append(True)
+
+            for i in range(position, len(entry_author)):
+                working_point_author.append(False)
+
+            working_point.append(working_point_author)
+
+        return working_point
 
     def save_best_point(self):
         self.best_point = copy.deepcopy(self.working_point)
