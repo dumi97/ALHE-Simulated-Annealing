@@ -61,6 +61,7 @@ class TestingModule:
         cur_temp = min_temp
         result_list = []
         while cur_temp <= max_temp:
+            print(f"cur_temp: {cur_temp}")
             iteration_list = []
             sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 0)
 
@@ -142,8 +143,9 @@ class TestingModule:
         cur_author = min_author
         cur_uni = min_uni
         result_list = []
-        while cur_uni < max_uni:
-            while cur_author < max_author:
+        while cur_uni <= max_uni:
+            while cur_author <= max_author:
+                print(f"cur_auth: {cur_author}\t\tcur_uni: {cur_uni}")
                 iteration_list = []
                 sa = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits,
                                                number_of_iterations, temperature, 0, cur_author, cur_uni)
@@ -232,5 +234,5 @@ def test_penalty(iterations, temperature, min_auth, max_auth, auth_step, min_uni
     module.print_penalty_results()
 
 
-# test_temperature(100, 10, 20, 1, verbosity=0)
-test_penalty(100, 90, min_auth=10, max_auth=15, auth_step=1, min_uni=10, max_uni=13, uni_step=1, verbosity=0)
+# test_temperature(10000, 10, 30, 1, verbosity=0)
+test_penalty(10000, 90, min_auth=10, max_auth=20, auth_step=1, min_uni=10, max_uni=20, uni_step=1, verbosity=0)
