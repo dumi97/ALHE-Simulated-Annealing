@@ -4,15 +4,17 @@ from input import generate_accepted_input
 import filozofia_input
 import matematyka_input
 import informatyka_techniczna_telekomunikacja_input
+import random
 
 
 class TestingModule:
-    def __init__(self, input_type="f", verbosity=0):
+    def __init__(self, input_type="f", verbosity=0, seed=23):
         # verbosity: 0 - no log file, 1 - log final result and basic info only, 2 - log whole result list, 3 - log everything
         self.verbosity = verbosity
         self.log_file = None
         self.used_field = None
         self.set_used_field(input_type)
+        self.seed = seed
         # temperature_results contain 2 tuples:
         #   1. lowest_iteration, lowest_iteration_score, lowest_iteration_temp
         #   2. lowest_best_score_iteration, best_score, best_score_lowest_iteration_temp
@@ -63,7 +65,8 @@ class TestingModule:
         while cur_temp <= max_temp:
             print(f"cur_temp: {cur_temp}")
             iteration_list = []
-            sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 0)
+            random.seed(self.seed)
+            sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 2)
 
             for i in range(number_of_iterations):
                 sa.simulated_annealing(1)
@@ -147,8 +150,9 @@ class TestingModule:
             while cur_author <= max_author:
                 print(f"cur_auth: {cur_author}\t\tcur_uni: {cur_uni}")
                 iteration_list = []
+                random.seed(self.seed)
                 sa = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits,
-                                               number_of_iterations, temperature, 0, cur_author, cur_uni)
+                                               number_of_iterations, temperature, 2, cur_author, cur_uni)
 
                 for i in range(number_of_iterations):
                     sa.simulated_annealing(1)
