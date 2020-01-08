@@ -1,8 +1,6 @@
-import utils
 from simulated_annealing_penalty import SimulatedAnnealingPenalty
 from simulated_annealing_repair import SimulatedAnnealingRepair
 from input import generate_accepted_input
-from output import generate_accepted_output
 import filozofia_input
 import matematyka_input
 import informatyka_techniczna_telekomunikacja_input
@@ -69,12 +67,12 @@ class TestingModule:
             for i in range(number_of_iterations):
                 sa.simulated_annealing(1)
                 iteration_list.append(sa.best_score)
-                self.log(3, f"---cur_temp={cur_temp},\tannealing_iteration={len(iteration_list)},\tbest_score={sa.best_score}")
+                self.log(3, "%-18s %-30s %s" % (f"---cur_temp={cur_temp},", f"annealing_iteration={len(iteration_list)},", f"best_score={sa.best_score}"))
 
             iteration, best_score = self.find_last_iteration(iteration_list)
             result_list.append((cur_temp, iteration, best_score))
 
-            self.log(2, f"cur_temp={cur_temp},\ttotal_iteration={iteration},\tbest_score={best_score}")
+            self.log(2, "%-15s %-26s %s" % (f"cur_temp={cur_temp},", f"total_iteration={iteration},", f"best_score={best_score}"))
 
             cur_temp += temp_step
 
@@ -153,12 +151,12 @@ class TestingModule:
                 for i in range(number_of_iterations):
                     sa.simulated_annealing(1)
                     iteration_list.append(sa.best_score)
-                    self.log(3, f"---cur_author={cur_author},\tcur_uni={cur_uni},\tannealing_iteration={len(iteration_list)},\tbest_score={sa.best_score}")
+                    self.log(3, "%-20s %-14s %-30s %s" % (f"---cur_author={cur_author},", f"cur_uni={cur_uni},", f"annealing_iteration={len(iteration_list)},", f"best_score={sa.best_score}"))
 
                 iteration, best_score = self.find_last_iteration(iteration_list)
                 result_list.append((cur_author, cur_uni, iteration, best_score))
 
-                self.log(2, f"cur_author={cur_author},\tcur_uni={cur_uni},\ttotal_iteration={iteration},\tbest_score={best_score}")
+                self.log(2, "%-17s %-14s %-26s %s" % (f"cur_author={cur_author},", f"cur_uni={cur_uni},", f"total_iteration={iteration},", f"best_score={best_score}"))
 
                 cur_author += author_step
             cur_uni += uni_step
@@ -235,4 +233,4 @@ def test_penalty(iterations, temperature, min_auth, max_auth, auth_step, min_uni
 
 
 # test_temperature(100, 10, 20, 1, verbosity=0)
-test_penalty(100, 90, min_auth=10, max_auth=200, auth_step=10, min_uni=10, max_uni=100, uni_step=10, verbosity=0)
+test_penalty(100, 90, min_auth=10, max_auth=15, auth_step=1, min_uni=10, max_uni=13, uni_step=1, verbosity=0)

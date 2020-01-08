@@ -132,4 +132,3 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         current_lookups[i] += 1
         if current_lookups[i] >= len(self.working_point[i]):
             current_lookups[i] = -1
-
