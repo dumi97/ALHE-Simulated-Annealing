@@ -7,12 +7,14 @@ import filozofia_input
 import matematyka_input
 import informatyka_techniczna_telekomunikacja_input
 
+
 def get_author_article_pairs_count(working_point):
     count = 0
     for row in working_point:
         count += len(row)
 
     return count
+
 
 def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90, init_generation_mode=0):
 
