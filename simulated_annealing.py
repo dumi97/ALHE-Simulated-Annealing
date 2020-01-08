@@ -144,7 +144,7 @@ class SimulatedAnnealing(abc.ABC):
         working_point = []
         for entry_author in entry_matrix:
             working_point_author = []
-            for j in range(len(score_author)):
+            for j in range(len(entry_author)):
                 working_point_author.append(bool(random.getrandbits(1)))
                 
             working_point.append(working_point_author)

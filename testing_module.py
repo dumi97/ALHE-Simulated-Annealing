@@ -66,7 +66,7 @@ class TestingModule:
             print(f"cur_temp: {cur_temp}")
             iteration_list = []
             random.seed(self.seed)
-            sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 2)
+            sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 4)
 
             for i in range(number_of_iterations):
                 sa.simulated_annealing(1)
@@ -152,7 +152,7 @@ class TestingModule:
                 iteration_list = []
                 random.seed(self.seed)
                 sa = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits,
-                                               number_of_iterations, temperature, 2, cur_author, cur_uni)
+                                               number_of_iterations, temperature, 4, cur_author, cur_uni)
 
                 for i in range(number_of_iterations):
                     sa.simulated_annealing(1)
