@@ -24,6 +24,9 @@ class SimulatedAnnealing(abc.ABC):
             self.working_point = self.build_initial_working_point_matrix_heuristic(self.entry_matrix,  self.author_limit_list, self.university_limit)
             self.working_point = self.sort_working_point_matrix(self.entry_matrix, self.working_point)
             self.entry_matrix = self.sort_entry_matrix(self.entry_matrix)
+        elif init_generation_mode == 4:
+            self.entry_matrix = self.sort_entry_matrix(self.entry_matrix)
+            self.working_point = self.build_initial_working_point_matrix_random(self.entry_matrix)
 
         self.current_score = self.calculate_score()
         self.current_iteration = 0
@@ -128,6 +131,22 @@ class SimulatedAnnealing(abc.ABC):
         working_point = []
         for entry_author in entry_matrix:
             working_point_author = [bool(fill)] * len(entry_author)
+            working_point.append(working_point_author)
+
+        return working_point
+
+    @staticmethod
+    def build_initial_working_point_matrix_random(entry_matrix):
+        """
+        Generates first working point matrix by filling structure with random values.
+        """
+
+        working_point = []
+        for entry_author in entry_matrix:
+            working_point_author = []
+            for j in range(len(score_author)):
+                working_point_author.append(bool(random.getrandbits(1)))
+                
             working_point.append(working_point_author)
 
         return working_point
