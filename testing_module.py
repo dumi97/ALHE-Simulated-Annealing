@@ -8,11 +8,12 @@ import random
 
 
 class TestingModule:
-    def __init__(self, input_type="f", verbosity=0, seed=23):
+    def __init__(self, input_type="f", verbosity=0, seed=123456789):
         # verbosity: 0 - no log file, 1 - log final result and basic info only, 2 - log whole result list, 3 - log everything
         self.verbosity = verbosity
         self.log_file = None
         self.used_field = None
+        self.current_input_type = None
         self.set_used_field(input_type)
         self.seed = seed
         # temperature_results contain 2 tuples:
@@ -33,6 +34,7 @@ class TestingModule:
         self.log_file.write(f"[{min_verbosity}] " + message + "\n")
 
     def set_used_field(self, input_type):
+        self.current_input_type = input_type
         if input_type == 'f':
             self.used_field = filozofia_input
         elif input_type == 'm':
@@ -53,7 +55,7 @@ class TestingModule:
 
         if self.verbosity > 0:
             self.log_file = open(log_name, log_type)
-            self.log(1, f"Testing temperature in range {min_temp}-{max_temp} with step {temp_step} for {number_of_iterations} iterations")
+            self.log(1, f"Testing temperature in range {min_temp}-{max_temp} with step {temp_step} for {number_of_iterations} iterations with input '{self.current_input_type}'")
 
         lp_matrix, score_matrix, contribution_matrix, author_limits, n_rows, n_columns = generate_accepted_input(self.used_field)
 
@@ -66,12 +68,12 @@ class TestingModule:
             print(f"cur_temp: {cur_temp}")
             iteration_list = []
             random.seed(self.seed)
-            sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 4)
+            sa = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, cur_temp, 0)
 
             for i in range(number_of_iterations):
                 sa.simulated_annealing(1)
                 iteration_list.append(sa.best_score)
-                self.log(3, "%-18s %-30s %s" % (f"---cur_temp={cur_temp},", f"annealing_iteration={len(iteration_list)},", f"best_score={sa.best_score}"))
+                self.log(3, "%-23s %-23s %-30s %s" % (f"---starting_temp={cur_temp},", f"anneling_temp={sa.temperature}",f"annealing_iteration={len(iteration_list)},", f"best_score={sa.best_score}"))
 
             iteration, best_score = self.find_last_iteration(iteration_list)
             result_list.append((cur_temp, iteration, best_score))
@@ -133,7 +135,7 @@ class TestingModule:
         if self.verbosity > 0:
             self.log_file = open(log_name, log_type)
             self.log(1, f"Testing author penalty in range {min_author}-{max_author} with step {author_step} and "
-                        f"university penalty in range {min_uni}-{max_uni} with step {uni_step} for {number_of_iterations} iterations with temperature {temperature}")
+                        f"university penalty in range {min_uni}-{max_uni} with step {uni_step} for {number_of_iterations} iterations with temperature {temperature} with input '{self.current_input_type}'")
 
         lp_matrix, score_matrix, contribution_matrix, author_limits, n_rows, n_columns = generate_accepted_input(
             self.used_field)
@@ -227,16 +229,16 @@ class TestingModule:
 
 
 def test_temperature(iterations, mini, maxi, step, input_type="f", verbosity=0):
-    module = TestingModule(input_type, verbosity)
+    module = TestingModule(input_type, verbosity, seed=random.randint(1, 9999999))
     module.test_starting_temperature(iterations, mini, maxi, step)
     module.print_temperature_results()
 
 
 def test_penalty(iterations, temperature, min_auth, max_auth, auth_step, min_uni, max_uni, uni_step, input_type="f", verbosity=0):
-    module = TestingModule(input_type, verbosity)
+    module = TestingModule(input_type, verbosity, seed=random.randint(1, 9999999))
     module.test_penalties(iterations, temperature, min_auth, max_auth, auth_step, min_uni, max_uni, uni_step)
     module.print_penalty_results()
 
 
-# test_temperature(10000, 10, 30, 1, verbosity=0)
-test_penalty(10000, 90, min_auth=10, max_auth=20, auth_step=1, min_uni=10, max_uni=20, uni_step=1, verbosity=0)
+test_temperature(100, 100, 200, 100, verbosity=3, input_type="i")
+# test_penalty(10000, 90, min_auth=10, max_auth=20, auth_step=1, min_uni=10, max_uni=20, uni_step=1, verbosity=0)
