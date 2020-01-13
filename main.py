@@ -69,11 +69,14 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
     print("\n---Last working_point:")
     utils.print_matrix(working_point)
     print(f"Last Score: {score}")
-    print("\n---Best working_point:")
-    utils.print_matrix(simulated_annealing.get_best_point())
-    print(f"---Best score: {simulated_annealing.get_best_score()}")
-    print("\n---Best working_point in original form:")
-    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
 
+    if simulated_annealing.get_best_point() != -1:
+        print("\n---Best working_point:")
+        utils.print_matrix(simulated_annealing.get_best_point())
+        print(f"---Best score: {simulated_annealing.get_best_score()}")
+        print("\n---Best working_point in original form:")
+        utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+    else:
+        print("\n---No best working_point!!! No feasible solution found!!!")
 
 main(True, 'f', 100000)

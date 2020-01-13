@@ -28,13 +28,17 @@ class SimulatedAnnealing(abc.ABC):
             self.entry_matrix = self.sort_entry_matrix(self.entry_matrix)
             self.working_point = self.build_initial_working_point_matrix_random(self.entry_matrix)
 
-        self.current_score = self.calculate_score()
+        self.current_score, is_feasible = self.calculate_score()
         self.current_iteration = 0
         self.iteration_count = iteration_count
         self.start_temperature = start_temperature
         self.temperature = self.start_temperature
         self.best_point = copy.deepcopy(self.working_point)
-        self.best_score = self.current_score
+
+        if is_feasible:
+            self.best_score = self.current_score
+        else:
+            self.best_score = -1
 
     @abc.abstractmethod
     def calculate_score(self):
@@ -223,12 +227,12 @@ class SimulatedAnnealing(abc.ABC):
         """
 
         i, j = self.generate_random_neighbour_change()
-        neighbour_score = self.calculate_neighbour_score(i, j)
+        neighbour_score, is_feasible = self.calculate_neighbour_score(i, j)
 
         if neighbour_score > self.current_score or random.random() <= self.calculate_acceptance_probability(neighbour_score):
             self.modify_working_point(i, j)
             self.current_score = neighbour_score
-            if neighbour_score > self.best_score:
+            if is_feasible and neighbour_score > self.best_score:
                 self.best_score = neighbour_score
                 self.save_best_point()
 

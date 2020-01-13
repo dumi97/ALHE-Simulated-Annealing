@@ -11,12 +11,14 @@ class SimulatedAnnealingPenalty(SimulatedAnnealing):
     def calculate_score(self):
         """
         Calculates score for working point stored in object.
+        Returns score for working point and if it is feasible point.
         """
         author_buffer = []
         university_buffer = 0
         total_score = 0
         total_author_penalty = 0
         total_university_penalty = 0
+        is_feasible = True
         for i in range(len(self.working_point)):
             author_buffer.append(0)
             for j in range(len(self.working_point[i])):
@@ -27,23 +29,26 @@ class SimulatedAnnealingPenalty(SimulatedAnnealing):
 
                     if author_buffer[i] > self.author_limit_list[i]:
                         total_author_penalty += self.author_penalty
+                        is_feasible = False
                     if university_buffer > self.university_limit:
                         total_university_penalty += self.university_penalty
+                        is_feasible = False
 
         total_score = total_score - total_author_penalty - total_university_penalty
-        return total_score
+        return total_score, is_feasible
 
     def calculate_neighbour_score(self, i, j):
         """
         Calculates neighbour score.
         It does not change working point.
+        Returns neighbour score and if it is feasible.
         """
 
         self.modify_working_point(i, j)
-        score = self.calculate_score()
+        score, is_feasible = self.calculate_score()
         self.modify_working_point(i, j)
 
-        return score
+        return score, is_feasible
 
     def modify_working_point(self, i, j):
         """

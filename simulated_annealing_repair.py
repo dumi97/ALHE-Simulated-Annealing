@@ -10,6 +10,18 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
     def calculate_score(self):
         """
         Calculates score for working point stored in object.
+        Returns score and True (point is always feasible).
+        Does point repairing (fixing).
+        """
+        total_score = self.calculate_score_without_repairing()
+        total_score = self.check_and_fix(i, j, True, total_score)
+
+        return total_score, True
+    
+    def calculate_score_without_repairing(self):
+        """
+        Calculates score for working point stored in object.
+        Returns score and True (point is always feasible).
         """
         self.author_buffer = []
         self.university_buffer = 0
@@ -28,16 +40,17 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         """
         Calculates neighbour score with simulated repair without modifications.
         It does not change working point.
+        Returns score and True (point is always feasible).
         """
 
         self.working_point[i][j] = not self.working_point[i][j]
 
-        neighbour_score = self.calculate_score()
+        neighbour_score = self.calculate_score_without_repairing()
         neighbour_score = self.check_and_fix(i, j, False, neighbour_score)
 
         self.working_point[i][j] = not self.working_point[i][j]
 
-        return neighbour_score
+        return neighbour_score, True
 
     def modify_working_point(self, i, j):
         """
@@ -48,7 +61,6 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         self.working_point[i][j] = not self.working_point[i][j]
         # calculate score to fill buffers
         self.calculate_score()
-        self.check_and_fix(i, j, True, 0)
 
     def check_and_fix(self, changed_i, changed_j, modify_list, current_score):
         """
