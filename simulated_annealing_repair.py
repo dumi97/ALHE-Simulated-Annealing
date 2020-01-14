@@ -14,7 +14,7 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
         Does point repairing (fixing).
         """
         total_score = self.calculate_score_without_repairing()
-        total_score = self.check_and_fix(i, j, True, total_score)
+        total_score = self.check_and_fix(0, 0, True, total_score)
 
         return total_score, True
     
