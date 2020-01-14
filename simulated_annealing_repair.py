@@ -65,7 +65,7 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
     def check_and_fix(self, changed_i, changed_j, modify_list, current_score):
         """
         Repairs the current working point. It can also simulate repair and calculate score without changing the point.
-        It will AVOID fixing the neighbour's changed (i, j) point even if it has the lowest unit gain
+        It will AVOID fixing the neighbour's changed (i, j) point even if it has the lowest unit gain.
         """
 
         # check and fix author limits
@@ -74,7 +74,7 @@ class SimulatedAnnealingRepair(SimulatedAnnealing):
             if self.author_buffer[i] <= self.author_limit_list[i]:
                 continue
             for j in range(len(self.working_point[i])):
-                if self.working_point[i][j] and (i != changed_i or j != changed_j):
+                if self.working_point[i][j] and ((i != changed_i or j != changed_j) or j == len(self.working_point[i])-1):
 
                     # print(f"---------- Fixing point ({i}, {j})")  # Debug
 
