@@ -23,20 +23,20 @@ def benchmark(dir, use_penalty=False, input_field='f', number_of_iterations=1000
     stdout = sys.stdout
     sys.stdout = PrintWriter(dir + '/i1_log.txt', stdout)
     print("\nInitial working point: full zero matrix")
-    main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=0)
+    main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=0, author_penalty=author_penalty, university_penalty=university_penalty)
 
     sys.stdout = PrintWriter(dir + '/i2_log.txt', stdout)
     print("\nInitial working point: full one matrix")
-    main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=1)
+    main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=1, author_penalty=author_penalty, university_penalty=university_penalty)
 
     sys.stdout = PrintWriter(dir + '/i3_log.txt', stdout)
     print("\nInitial working point: normal heuristic matrix")
-    main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=2)
+    main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=2, author_penalty=author_penalty, university_penalty=university_penalty)
 
     for i in range(1, 26):
         sys.stdout = PrintWriter(dir + f'/i{i+3}_log.txt', stdout)
         print(f"\n{i}. Initial working point: permutate heuristic matrix")
-        main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=3)
+        main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=3, author_penalty=author_penalty, university_penalty=university_penalty)
 
 if __name__ == '__main__':
-    benchmark('./test', True, 'f', 100000, 9, 150, 200)
+    benchmark('./test', True, 'm', 300000, 17, 50, 30)
