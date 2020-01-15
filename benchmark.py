@@ -10,9 +10,9 @@ def benchmark(use_penalty=False, input_field='f', number_of_iterations=100000, s
     print("\nInitial working point: normal heuristic matrix")
     main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=2)
 
-    for i in range(25):
-        print("\n1. Initial working point: permutate heuristic matrix")
+    for i in range(1, 26):
+        print(f"\n{i}. Initial working point: permutate heuristic matrix")
         main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=3)
 
 if __name__ == '__main__':
-    benchmark(False, 'f', 100000, 9)
+    benchmark(False, 'i', 100000, 9)
