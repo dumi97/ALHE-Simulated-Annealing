@@ -165,7 +165,8 @@ class SimulatedAnnealing(abc.ABC):
 
         working_point = []
         university_contribution = 0
-        for entry_author in entry_matrix:
+        for j in range(len(entry_matrix)):
+            entry_author = entry_matrix[j]
             author_contribution = 0
 
             position = 0
@@ -175,7 +176,7 @@ class SimulatedAnnealing(abc.ABC):
                 author_contribution += entry.contribution
                 university_contribution += entry.contribution
 
-                if author_contribution > author_limit_list[i] or university_contribution > university_limit:
+                if author_contribution > author_limit_list[j]:
                     author_contribution -= entry.contribution
                     university_contribution -= entry.contribution
                     break
