@@ -14,4 +14,5 @@ def benchmark(use_penalty=False, input_field='f', number_of_iterations=100000, s
         print("1. Initial working point: permutate heuristic matrix")
         main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=3)
 
-benchmark(False, 'f', 100000, 9)
+if __name__ == '__main__':
+    benchmark(False, 'f', 100000, 9)

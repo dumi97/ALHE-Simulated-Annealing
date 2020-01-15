@@ -77,4 +77,5 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
     else:
         print("\n---No best working_point!!! No feasible solution found!!!")
 
-main(False, 'f', 100000)
+if __name__ == '__main__':
+    main(False, 'f', 100000)
