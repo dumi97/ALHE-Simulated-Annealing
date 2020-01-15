@@ -16,6 +16,18 @@ def get_author_article_pairs_count(working_point):
     return count
 
 
+def print_best(iteration, simulated_annealing, n_rows, n_columns):
+    if simulated_annealing.get_best_point() != -1:
+        print(f"\n---{iteration} best working_point:")
+        utils.print_matrix(simulated_annealing.get_best_point())
+        print(f"---{iteration} best score: {simulated_annealing.get_best_score()}")
+        print(f"--{iteration} best iteration: {simulated_annealing.best_score_iteration}")
+        print(f"\n---{iteration} best working point in original form:")
+        utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+    else:
+        print("\n---No best working_point!!! No feasible solution found!!!")
+
+
 def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90, init_generation_mode=0):
 
     if input_field == 'f':
@@ -62,20 +74,19 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
         print(f"---{stop} current iteration score: {score}")
         print(f"---{simulated_annealing.best_score_iteration} best iteration score: {simulated_annealing.get_best_score()}")
 
+    print(f"\n--{prev_iteration} working_point:")
+    utils.print_matrix(simulated_annealing.get_best_point())
+    print(f"\n---{prev_iteration} working point in original form:")
+    utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
+    
+    print_best(prev_iteration, simulated_annealing, n_rows, n_columns)
+
     working_point, score = simulated_annealing.simulated_annealing()
     print("\n---Last working_point:")
     utils.print_matrix(working_point)
     print(f"Last Score: {score}")
 
-    if simulated_annealing.get_best_point() != -1:
-        print("\n---Best working_point:")
-        utils.print_matrix(simulated_annealing.get_best_point())
-        print(f"---Best score: {simulated_annealing.get_best_score()}")
-        print(f"--Best iteration: {simulated_annealing.best_score_iteration}")
-        print("\n---Best working_point in original form:")
-        utils.print_matrix(generate_accepted_output(simulated_annealing.entry_matrix, simulated_annealing.get_best_point(), n_rows, n_columns))
-    else:
-        print("\n---No best working_point!!! No feasible solution found!!!")
+    print_best(number_of_iterations, simulated_annealing, n_rows, n_columns)
 
 if __name__ == '__main__':
     main(False, 'f', 100000)
