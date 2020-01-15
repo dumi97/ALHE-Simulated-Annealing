@@ -37,8 +37,10 @@ class SimulatedAnnealing(abc.ABC):
 
         if is_feasible:
             self.best_score = self.current_score
+            self.best_score_iteration = 0
         else:
             self.best_score = -1
+            self.best_score_iteration = -1
 
     @abc.abstractmethod
     def calculate_score(self):
@@ -235,6 +237,7 @@ class SimulatedAnnealing(abc.ABC):
             if is_feasible and neighbour_score > self.best_score:
                 self.best_score = neighbour_score
                 self.save_best_point()
+                self.best_score_iteration = self.current_iteration
 
     def generate_random_neighbour_change(self):
         """
