@@ -15,4 +15,4 @@ def benchmark(use_penalty=False, input_field='f', number_of_iterations=100000, s
         main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=3)
 
 if __name__ == '__main__':
-    benchmark(False, 'i', 100000, 9)
+    benchmark(False, 'f', 100000, 9)
