@@ -18,7 +18,7 @@ class PrintWriter:
         self.stdout.flush()
 
 
-def benchmark(dir, use_penalty=False, input_field='f', number_of_iterations=100000, starting_temperature=9):
+def benchmark(dir, use_penalty=False, input_field='f', number_of_iterations=100000, starting_temperature=9, author_penalty=150, university_penalty=200):
     os.mkdir(dir)
     stdout = sys.stdout
     sys.stdout = PrintWriter(dir + '/i1_log.txt', stdout)
@@ -39,4 +39,4 @@ def benchmark(dir, use_penalty=False, input_field='f', number_of_iterations=1000
         main(use_penalty, input_field, number_of_iterations, starting_temperature, init_generation_mode=3)
 
 if __name__ == '__main__':
-    benchmark('./test', False, 'f', 100000, 9)
+    benchmark('./test', True, 'f', 100000, 9, 150, 200)

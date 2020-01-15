@@ -28,7 +28,7 @@ def print_best(iteration, simulated_annealing, n_rows, n_columns):
         print("\n---No best working_point!!! No feasible solution found!!!")
 
 
-def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90, init_generation_mode=0):
+def main(use_penalty, input_field, number_of_iterations=100000, starting_temperature=90, init_generation_mode=0, author_penalty=150, university_penalty=200):
 
     if input_field == 'f':
         used_input = filozofia_input
@@ -42,7 +42,7 @@ def main(use_penalty, input_field, number_of_iterations=100000, starting_tempera
 
     lp_matrix, score_matrix, contribution_matrix, author_limits, n_rows, n_columns = generate_accepted_input(used_input)
     if use_penalty:
-        simulated_annealing = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode, 150, 200)
+        simulated_annealing = SimulatedAnnealingPenalty(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode, author_penalty, university_penalty)
     else:
         simulated_annealing = SimulatedAnnealingRepair(lp_matrix, score_matrix, contribution_matrix, author_limits, number_of_iterations, starting_temperature, init_generation_mode)
     
